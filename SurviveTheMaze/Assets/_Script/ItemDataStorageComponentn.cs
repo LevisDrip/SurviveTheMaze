@@ -11,6 +11,7 @@ public class ItemDataStorageComponentn : MonoBehaviour, IPointerClickHandler
     public void OnPointerClick(PointerEventData eventData)
     {
         InventoryScript.Instance.SelectedInventoryItem = this;
+        InventoryScript.Instance.PreviouslySelectedItem = this;
         InventoryScript.Instance.MoveSelectedVisual(this.transform.position);
     }
 }

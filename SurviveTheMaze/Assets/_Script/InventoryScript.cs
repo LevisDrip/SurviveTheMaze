@@ -29,6 +29,7 @@ public class InventoryScript : MonoBehaviour
 
         [Header("Item Data")]
         public ItemDataStorageComponentn SelectedInventoryItem;
+        public ItemDataStorageComponentn PreviouslySelectedItem;
         public ItemData EquippedItem;
 
         [Header("Other")]

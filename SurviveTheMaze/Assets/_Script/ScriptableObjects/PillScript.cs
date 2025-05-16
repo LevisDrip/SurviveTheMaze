@@ -9,8 +9,10 @@ public class PillScript : MonoBehaviour, IItemAble
     public void UseItem()
     {
         FindFirstObjectByType<PlayerController>().TakeDamage(-HealAmount);
+        
+        InventoryScript.Instance.inventoryItems.Remove(InventoryScript.Instance.PreviouslySelectedItem.StoredItem);
 
-        FindFirstObjectByType<PlayerController>().ItemDiscard();
+        Destroy(InventoryScript.Instance.PreviouslySelectedItem.gameObject);
 
         Destroy(transform.parent.gameObject);
     }
