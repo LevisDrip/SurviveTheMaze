@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -12,11 +13,12 @@ public class InventoryScript : MonoBehaviour
         [Header("Inventory Visual UI")]
         public GameObject InventoryMenu;
         public GameObject InventoryVisual;
+        public TextMeshProUGUI EnemyKillText;
+    public TextMeshProUGUI CoinText;
 
-        [Header("Inventory Numerical UI")]
+
+    [Header("Inventory Numerical UI")]
         public int EnemyKills;
-
-        //Delete or implement later.
         public int Coins;
 
         [Header("Inventory Other UI")]
@@ -58,6 +60,8 @@ public class InventoryScript : MonoBehaviour
             Instance = this;
         }
 
+        EnemyKills = 0;
+
         InventoryMenu.SetActive(false);
     }
 
@@ -80,16 +84,24 @@ public class InventoryScript : MonoBehaviour
             SelectedInventoryItem = null;
 
             InventoryMenu.SetActive(false);
+            
             IsOpen = false;
+            
             Cursor.lockState = CursorLockMode.Locked;
             Time.timeScale = 1;
         }
         else
         {
             InventoryMenu.SetActive(true);
+
             IsOpen = true;
+
+            EnemyKillText.text = "Enemy Kills: " + EnemyKills;
+            CoinText.text = "Coins: " + Coins;
+
             Cursor.lockState = CursorLockMode.None;
             Time.timeScale = 0;
+            
             SelectedItemVisual.gameObject.SetActive(false);
         }
     }

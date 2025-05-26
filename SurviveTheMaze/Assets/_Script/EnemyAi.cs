@@ -185,6 +185,7 @@ public class EnemyAi : MonoBehaviour, IDamageble
         if (health <= 0)
         {
             GameManager.Instance.EnemiesKilled++;
+            InventoryScript.Instance.EnemyKills++;
             Destroy(gameObject);
         }
     }

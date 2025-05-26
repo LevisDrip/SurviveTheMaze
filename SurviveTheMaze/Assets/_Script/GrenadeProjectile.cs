@@ -11,6 +11,8 @@ public class GrenadeProjectile : MonoBehaviour
 
     public float LaunchForce;
 
+    public GameObject ExplosionFX;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -34,6 +36,7 @@ public class GrenadeProjectile : MonoBehaviour
                 }
             }
 
+            Instantiate(ExplosionFX, transform.position, transform.rotation);
             Destroy(gameObject);
         }
     }
