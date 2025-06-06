@@ -362,12 +362,12 @@ GameObject:
   m_Component:
   - component: {fileID: 6417422520588562889}
   - component: {fileID: 3725181252392591892}
-  - component: {fileID: 8350874909128059344}
   - component: {fileID: 6322860225870001412}
   - component: {fileID: 5691165854372493143}
   - component: {fileID: 8324299363861309545}
+  - component: {fileID: 7188293633133194075}
   m_Layer: 0
-  m_Name: RobotEnemy
+  m_Name: RobotEnemyV2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -386,6 +386,7 @@ Transform:
   m_LocalScale: {x: 0.6, y: 0.6, z: 0.6}
   m_ConstrainProportionsScale: 1
   m_Children:
+  - {fileID: 1065897701789071034}
   - {fileID: 5944979166854109134}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -411,40 +412,6 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!114 &8350874909128059344
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 706841850884138170}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8eb2419af20c2dd4ea7e8bca8dfcf533, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  agent: {fileID: 0}
-  player: {fileID: 0}
-  whatIsGround:
-    serializedVersion: 2
-    m_Bits: 128
-  whatIsPlayer:
-    serializedVersion: 2
-    m_Bits: 64
-  DashDuration: 0.5
-  DashSpeed: 50
-  TimeToDash: 2
-  WaitAfterDash: 2
-  health: 10
-  walkPoint: {x: 0, y: 0, z: 0}
-  walkPointRange: 20
-  IsDashing: 0
-  damage: 10
-  sightRange: 20
-  attackRange: 5
-  playerInSightRange: 0
-  playerInAttackRange: 0
-  PlayerCollision: {fileID: 8324299363861309545}
 --- !u!195 &6322860225870001412
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -501,6 +468,40 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 2.55, y: 1, z: 2.55}
   m_Center: {x: 0, y: -0.3, z: 0}
+--- !u!114 &7188293633133194075
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 706841850884138170}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fcb6db8726db59749ab0eef09ca7fc8f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  agent: {fileID: 0}
+  player: {fileID: 0}
+  whatIsGround:
+    serializedVersion: 2
+    m_Bits: 128
+  whatIsPlayer:
+    serializedVersion: 2
+    m_Bits: 64
+  health: 10
+  walkPoint: {x: 0, y: 0, z: 0}
+  walkPointRange: 20
+  damage: 10
+  EnemyProjectile: {fileID: 8767571315060896042, guid: b7d130701eb76be4b98e7f6262555a8c,
+    type: 3}
+  FirePoint: {fileID: 5409378369687248586}
+  ProjectileForce: 500
+  ShootTimer: 2
+  sightRange: 20
+  attackRange: 10
+  playerInSightRange: 0
+  playerInAttackRange: 0
+  PlayerCollision: {fileID: 8324299363861309545}
 --- !u!1 &737922734081151899
 GameObject:
   m_ObjectHideFlags: 0
@@ -1217,6 +1218,37 @@ Transform:
   - {fileID: 8544247352066376015}
   m_Father: {fileID: 5944979166854109134}
   m_LocalEulerAnglesHint: {x: 0, y: -33, z: -25}
+--- !u!1 &5409378369687248586
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1065897701789071034}
+  m_Layer: 0
+  m_Name: FirePoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1065897701789071034
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5409378369687248586}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.801, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 6417422520588562889}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &5569299378829787781
 GameObject:
   m_ObjectHideFlags: 0

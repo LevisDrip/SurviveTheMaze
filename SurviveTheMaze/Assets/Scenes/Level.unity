@@ -5471,14 +5471,14 @@ MonoBehaviour:
   SpawnPoint: {fileID: 6674430682814872460}
   ExitPoint: {fileID: 1420918267}
   SpawnSafeRadius: 20
-  BoxLimit: 1
-  EnemyLimit: 0
+  BoxLimit: 2
+  EnemyLimit: 2
   OptionLimit: 0.4
   WallChance: 0.3
   Player: {fileID: 924137621946414982, guid: b6495dcc1e878a845ac7226db8f6f288, type: 3}
   CurrentPlayer: {fileID: 0}
-  Box: {fileID: 922458040039737352, guid: 46f94a132c5953d46a968a27cf98f6b2, type: 3}
-  MandM: {fileID: 706841850884138170, guid: d4fca05474ecdd441bb38c9d354947c8, type: 3}
+  Box: {fileID: 5478176490765161500, guid: 6cd234abc13504a41b45fb4473ef4eb3, type: 3}
+  MandM: {fileID: 706841850884138170, guid: d3f753c267d6b6543947d0654fc0f726, type: 3}
   MapContainer: {fileID: 943319432}
 --- !u!1 &2075809857
 GameObject:

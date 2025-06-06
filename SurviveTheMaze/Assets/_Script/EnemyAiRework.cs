@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Net.NetworkInformation;
 using System.Runtime.CompilerServices;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -53,6 +54,10 @@ public class EnemyAiRework : MonoBehaviour, IDamageble
     [SerializeField] private GameObject EnemyProjectile;
     [SerializeField] private GameObject FirePoint;
 
+    [SerializeField] private float ProjectileForce;
+
+    [SerializeField] private float ShootTimer;
+
 
     #endregion
 
@@ -91,6 +96,9 @@ public class EnemyAiRework : MonoBehaviour, IDamageble
 
     private void Update()
     {
+        ShootTimer -= Time.deltaTime;
+
+
         if (!player)
         {
             player = FindFirstObjectByType<PlayerController>().transform;
@@ -103,20 +111,13 @@ public class EnemyAiRework : MonoBehaviour, IDamageble
 
         if (!playerInSightRange && !playerInAttackRange) Patrol();
         if (playerInSightRange && !playerInAttackRange) ChasePlayer();
-        if(playerInSightRange && !playerInAttackRange)
-        {
-            //IsDashing = false;
-            agent.enabled = true;
-            PlayerCollision.isTrigger = false;
-            //CurrentDashTime = 0;
-        }
         if (playerInAttackRange && playerInSightRange) EnemyShoots();
 
         //Debug.Log(IsDashing);
 
-        if(EnemyMove && agent.enabled)
+        if (EnemyMove && agent.enabled)
         {
-            EnemyMove.SetBool("Moving", agent.velocity.magnitude != 0? true : false);
+            EnemyMove.SetBool("Moving", agent.velocity.magnitude != 0 ? true : false);
         }
     }
 
@@ -196,7 +197,24 @@ public class EnemyAiRework : MonoBehaviour, IDamageble
 
     void EnemyShoots()
     {
-        Instantiate(EnemyProjectile, FirePoint.transform.position + FirePoint.transform.forward, FirePoint.transform.rotation);
+        agent.SetDestination(transform.position);
+
+        if(ShootTimer <= 0)
+        {
+
+            Vector3 direction = (player.position + new Vector3(0, 1, 0) - FirePoint.transform.position).normalized;
+
+            EnemyProjectileScript projectile = Instantiate(EnemyProjectile, FirePoint.transform.position, Quaternion.LookRotation(direction)).GetComponent<EnemyProjectileScript>();
+            projectile.origin = transform;
+
+            Rigidbody rb = projectile.GetComponent<Rigidbody>();
+            if (rb != null)
+            {
+                rb.AddForce(direction * ProjectileForce, ForceMode.Impulse);
+
+                ShootTimer = 2;
+            }
+        }
     }
 
     //void DashAttack()
@@ -246,7 +264,7 @@ public class EnemyAiRework : MonoBehaviour, IDamageble
 
     #endregion
 
-    private void OnDrawGizmosSelected()
+    private void OnDrawGizmos()
     {
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, attackRange);

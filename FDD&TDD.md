@@ -21,8 +21,9 @@ Dit zijn de toevoegingen waaraan ik de komende tijd wil werken:
 * Items die gebruikt zijn moeten verwijderd worden van de inventory.
 * Granaten moeten werken.
 * Een teller van vijandelijke kills moet beschikbaar zijn binnen het inventory scherm.
-* Mogelijk met een tekort aan tijd: Meer enemies
 * Coins implementeren, Mocht er tijd over zijn.
+* Mogelijk met een tekort aan tijd: Meer enemies
+
 
 ### --------------------------------------------------------------------------
 
