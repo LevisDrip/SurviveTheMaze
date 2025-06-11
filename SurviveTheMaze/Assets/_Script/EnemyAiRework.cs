@@ -17,20 +17,6 @@ public class EnemyAiRework : MonoBehaviour, IDamageble
 
     private float PatrolWait = 10;
 
-    //#region DashValues
-
-
-    //[Header("Dash Values")]
-    //[SerializeField] private float DashDuration;
-    //[SerializeField] private float DashSpeed;
-    //[SerializeField] private float TimeToDash;
-    //[SerializeField] private float WaitAfterDash;
-    //Vector3 DashStartPos;
-    //float CurrentDashTime;
-
-
-    //#endregion
-
     [SerializeField] private float health;
 
     #region Patrol
@@ -124,58 +110,56 @@ public class EnemyAiRework : MonoBehaviour, IDamageble
     #region States
 
 
-    private void Patrol()
-    {
-        if (!walkPointSet) SearchWalkPoint();
-
-        if (walkPointSet && agent.enabled)
+        private void Patrol()
         {
-            agent.SetDestination(walkPoint);
+            if (!walkPointSet) SearchWalkPoint();
 
-            // Check if the enemy has reached the walkPoint
-            if (!agent.pathPending && agent.remainingDistance <= agent.stoppingDistance)
+            if (walkPointSet && agent.enabled)
             {
-                agent.SetDestination(transform.position);
-                PatrolWait -= Time.deltaTime;
-                if (PatrolWait <= 0)
+                agent.SetDestination(walkPoint);
+
+                // Check if the enemy has reached the walkPoint
+                if (!agent.pathPending && agent.remainingDistance <= agent.stoppingDistance)
                 {
-                    walkPointSet = false; // Reset to find a new walk point
-                    PatrolWait = 5;
+                    agent.SetDestination(transform.position);
+                    PatrolWait -= Time.deltaTime;
+                    if (PatrolWait <= 0)
+                    {
+                        walkPointSet = false; // Reset to find a new walk point
+                        PatrolWait = 5;
+                    }
                 }
             }
         }
-    }
+        #region PatrolLogic
 
 
-    #region PatrolLogic
-
-
-    private void SearchWalkPoint()
-    {
-        Vector3 randomDirection = new Vector3(
-            Random.Range(-walkPointRange, walkPointRange),
-            0,
-            Random.Range(-walkPointRange, walkPointRange)
-        );
-
-        Vector3 potentialWalkPoint = transform.position + randomDirection;
-
-        // Validate the walk point using NavMesh
-        if (NavMesh.SamplePosition(potentialWalkPoint, out NavMeshHit hit, 2f, NavMesh.AllAreas))
+        private void SearchWalkPoint()
         {
-            walkPoint = hit.position;
-            walkPointSet = true;
+            Vector3 randomDirection = new Vector3(
+                Random.Range(-walkPointRange, walkPointRange),
+                0,
+                Random.Range(-walkPointRange, walkPointRange)
+            );
+
+            Vector3 potentialWalkPoint = transform.position + randomDirection;
+
+            // Validate the walk point using NavMesh
+            if (NavMesh.SamplePosition(potentialWalkPoint, out NavMeshHit hit, 2f, NavMesh.AllAreas))
+            {
+                walkPoint = hit.position;
+                walkPointSet = true;
+            }
         }
-    }
 
 
-    #endregion
+        #endregion
 
 
-    private void ChasePlayer()
-    {
-        agent.SetDestination(player.position);
-    }
+        private void ChasePlayer()
+        {
+            agent.SetDestination(player.position);
+        }
 
 
     #endregion
@@ -183,86 +167,42 @@ public class EnemyAiRework : MonoBehaviour, IDamageble
 
     #region Damage Functions
 
-    public void TakeDamage(float amount)
-    {
-        health -= amount;
-
-        if (health <= 0)
+        public void TakeDamage(float amount)
         {
-            GameManager.Instance.EnemiesKilled++;
-            InventoryScript.Instance.EnemyKills++;
-            Destroy(gameObject);
-        }
-    }
+            health -= amount;
 
-    void EnemyShoots()
-    {
-        agent.SetDestination(transform.position);
-
-        if(ShootTimer <= 0)
-        {
-
-            Vector3 direction = (player.position + new Vector3(0, 1, 0) - FirePoint.transform.position).normalized;
-
-            EnemyProjectileScript projectile = Instantiate(EnemyProjectile, FirePoint.transform.position, Quaternion.LookRotation(direction)).GetComponent<EnemyProjectileScript>();
-            projectile.origin = transform;
-
-            Rigidbody rb = projectile.GetComponent<Rigidbody>();
-            if (rb != null)
+            if (health <= 0)
             {
-                rb.AddForce(direction * ProjectileForce, ForceMode.Impulse);
-
-                ShootTimer = 2;
+                GameManager.Instance.EnemiesKilled++;
+                InventoryScript.Instance.EnemyKills++;
+                Destroy(gameObject);
             }
         }
-    }
 
-    //void DashAttack()
-    //{
-    //    CurrentDashTime += Time.deltaTime;
-    //    //prepare dash
-    //    if(CurrentDashTime <= TimeToDash)
-    //    {
-    //        IsDashing = true;
-    //        agent.enabled = false;
-    //        PlayerCollision.isTrigger = true;
-    //        DashStartPos = transform.position;
+        void EnemyShoots()
+        {
+            agent.SetDestination(transform.position);
 
-    //        //aim at player
-    //        transform.LookAt(new Vector3(player.position.x, transform.position.y, player.position.z));
-    //    }
-    //    //dash
-    //    else if(CurrentDashTime <= DashDuration + TimeToDash)
-    //    {
-    //        transform.position += transform.forward * DashSpeed * Time.deltaTime;
-    //        if(Physics.Linecast(DashStartPos, transform.position, out RaycastHit Hit))
-    //        {
-    //            IDamageble Target = Hit.transform.GetComponent<IDamageble>();
-    //            if(Target != null && Hit.transform == player)
-    //            {
-    //                Target.TakeDamage(damage);
-    //                DashStartPos = transform.position;
-    //            }
-    //            else if(Hit.transform != player && Hit.transform != transform)
-    //            {
-    //                transform.position = Hit.point;
-    //                CurrentDashTime = 999;
-    //            }
+            if(ShootTimer <= 0)
+            {
 
-    //            print(Hit.transform.name);
-    //        }
-    //    }
-    //    //fuck off
-    //    else if(CurrentDashTime > DashDuration + TimeToDash)
-    //    {
-    //        IsDashing = false;
-    //        agent.enabled = true;
-    //        PlayerCollision.isTrigger = false;
-    //        CurrentDashTime = 0;
-    //    }
-    //}
+                Vector3 direction = (player.position + new Vector3(0, 1, 0) - FirePoint.transform.position).normalized;
+
+                EnemyProjectileScript projectile = Instantiate(EnemyProjectile, FirePoint.transform.position, Quaternion.LookRotation(direction)).GetComponent<EnemyProjectileScript>();
+                projectile.origin = transform;
+
+                Rigidbody rb = projectile.GetComponent<Rigidbody>();
+                if (rb != null)
+                {
+                    rb.AddForce(direction * ProjectileForce, ForceMode.Impulse);
+
+                    ShootTimer = 2;
+                }
+            }
+        }
 
     #endregion
+
 
     private void OnDrawGizmos()
     {
