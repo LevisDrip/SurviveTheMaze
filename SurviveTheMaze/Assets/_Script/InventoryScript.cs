@@ -21,6 +21,8 @@ public class InventoryScript : MonoBehaviour
         public int EnemyKills;
         public int Coins;
 
+        public int InventorySlots;
+
         [Header("Inventory Other UI")]
         public GameObject InventoryParent;
 

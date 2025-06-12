@@ -5471,8 +5471,8 @@ MonoBehaviour:
   SpawnPoint: {fileID: 6674430682814872460}
   ExitPoint: {fileID: 1420918267}
   SpawnSafeRadius: 20
-  BoxLimit: 100
-  EnemyLimit: 0
+  BoxLimit: 2
+  EnemyLimit: 1
   OptionLimit: 0.4
   WallChance: 0.3
   Player: {fileID: 924137621946414982, guid: b6495dcc1e878a845ac7226db8f6f288, type: 3}

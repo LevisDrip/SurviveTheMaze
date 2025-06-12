@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using NUnit;
 using TMPro;
 using Unity.VisualScripting;
 using Unity.VisualScripting.FullSerializer.Internal;
@@ -21,40 +22,49 @@ public class NoiseTexture : MonoBehaviour
 
     public float TileSize;
 
+    bool CompleteFinish;
+    bool MapFinish;
+    bool EntityFinish;
+
     #region MapObjects
 
-        [Header("MapObjects")]
-        public GameObject Wall;
-        public GameObject Floor;
+    [Header("MapObjects")]
+    public GameObject Wall;
+    public GameObject Floor;
 
-        public GameObject SpawnPoint;
-        public GameObject ExitPoint;
+    public GameObject SpawnPoint;
+    public GameObject ExitPoint;
 
     #endregion
 
     #region MapRadius & SpawnLimits
-        
-        [Header("MapRadius & SpawnLimits")]        
-        public float SpawnSafeRadius;
-        [Range(0, 100)]
-        public int BoxLimit;
-        [Range(0, 100)]
-        public int EnemyLimit;
-        [Range(0.0f, 1.0f)]
-        public float OptionLimit;
-        [Range(0.0f, 1.0f)]
-        public float WallChance;
+
+    [Header("MapRadius & SpawnLimits")]
+    public float SpawnSafeRadius;
+    [Range(0, 100)]
+    public int BoxLimit;
+    [Range(0, 100)]
+    public float EnemyLimit;
+    [Range(0.0f, 1.0f)]
+    public float OptionLimit;
+    [Range(0.0f, 1.0f)]
+    public float WallChance;
+
+
+    public int EnemyCap;
 
     #endregion
 
     Vector3 StartPos;
+    Vector3 EndPos;
+    int FailCounter;
     private NavMeshPath path;
 
     #region Player
 
-        [Header("Player")]
-        public GameObject Player;
-        public PlayerController CurrentPlayer;
+    [Header("Player")]
+    public GameObject Player;
+    public PlayerController CurrentPlayer;
 
     #endregion
 
@@ -67,6 +77,9 @@ public class NoiseTexture : MonoBehaviour
 
     private void Awake()
     {
+        StartPos = Vector3.zero;
+        EndPos = Vector3.zero;
+
         CurrentPlayer = FindFirstObjectByType<PlayerController>();
 
         path = new NavMeshPath();
@@ -74,19 +87,51 @@ public class NoiseTexture : MonoBehaviour
         NoisePositions = new float[(int)(Scale.x * Scale.y)];
         Options.Clear();
 
-        GenerateMap();
-        if(Options.Count < 10)
-        {
-            print("Map failed");
-            RegenerateMap();
-        }
-        PlaceSpawnPoint();
-        PlaceExitPoint();
-        EntitySpawning();
+        //EntitySpawning();
     }
 
     private void Update()
     {
+        if(!MapFinish)
+        {
+            GenerateMap();
+
+            if(Options.Count <= 10)
+            {
+                print("Map failed");
+                RegenerateMap();
+            }
+            else
+            {
+                MapFinish = true;
+            }
+        }
+        else if(!CompleteFinish)
+        {
+            FindSpawnPoint();
+
+            if (EndPos != Vector3.zero)
+            {
+                CompleteFinish = true;
+            }
+        }
+        else if(!EntityFinish)
+        {
+            EntitySpawning();
+            
+            if (!CurrentPlayer)
+            {
+                CurrentPlayer = Instantiate(Player, StartPos + new Vector3(0, 1, 0), transform.rotation).GetComponent<PlayerController>();
+            }
+            else
+            {
+                CurrentPlayer.transform.position = StartPos + new Vector3(0, 1, 0);
+                CurrentPlayer.DisableLoadScreen();
+            }
+
+            EntityFinish = true;
+        }
+
         if (Input.GetKey(KeyCode.L))
         {
             SceneManager.LoadScene(0);
@@ -97,7 +142,14 @@ public class NoiseTexture : MonoBehaviour
             RegenerateMap();
         }
 
-        
+        if (path.corners.Length <= 0)
+        {
+            return;
+        }
+        for (int i = 0; i < path.corners.Length - 1; i++)
+        {
+            Debug.DrawLine(path.corners[i] + new Vector3(0, 10, 0), path.corners[i + 1] + new Vector3(0, 10, 0), Color.red);
+        }
     }
 
 
@@ -124,23 +176,23 @@ public class NoiseTexture : MonoBehaviour
                 if (Point > WallChance)
                 {
                     Instantiate(Floor, position, transform.rotation, MapContainer.transform);
-                    
+
                     if (Point > OptionLimit && position.x > 1 && position.z > 1 && position.x < 88 && position.z < 88)
                     {
                         Options.Add(position);
                     }
                 }
-                else if(Point <= WallChance)
+                else if (Point <= WallChance)
                 {
                     Instantiate(Wall, position, transform.rotation, MapContainer);
                 }
 
-                if(x == 0 || x == Scale.y - 1 || y == 0 || y == Scale.x - 1)
+                if (x == 0 || x == Scale.y - 1 || y == 0 || y == Scale.x - 1)
                 {
                     Instantiate(Wall, position, transform.rotation, MapContainer);
                 }
 
-                
+
             }
         }
     }
@@ -148,102 +200,69 @@ public class NoiseTexture : MonoBehaviour
 
     #region MapPlacingLogic
 
-        void PlaceSpawnPoint()
+    void FindSpawnPoint()
+    {
+        if(FailCounter > 100)
         {
-            Vector3 spawnLocation = Options[Random.Range(0, Options.Count - 1)];
-            GameObject SpawnInstance = Instantiate(SpawnPoint, spawnLocation + new Vector3(0, 0.5f, 0), transform.rotation, MapContainer);
-            StartPos = SpawnInstance.transform.position;
+            RegenerateMap();
+            return;
+        }
 
-            if (!CurrentPlayer)
+        if (StartPos == Vector3.zero)
+        {
+            StartPos = Instantiate(SpawnPoint, Options[Random.Range(0, Options.Count)] + new Vector3(0, 0.5f, 0), transform.rotation).transform.position + new Vector3(0, 1, 0);
+        }
+        else if (EndPos == Vector3.zero)
+        {
+            Vector3 FarOption = GetFarOption();
+
+            path = new NavMeshPath();
+            NavMesh.CalculatePath(StartPos, FarOption, NavMesh.AllAreas, path);
+
+            Vector3 TestPoint = path.corners[path.corners.Length - 1];
+            TestPoint.y = 0;
+            Vector3 TestPoint2 = FarOption; TestPoint2.y = 0;
+            if (TestPoint == TestPoint2)
             {
-                CurrentPlayer = Instantiate(Player, SpawnInstance.transform.position + new Vector3(0, 3, 0), SpawnInstance.transform.rotation).GetComponent<PlayerController>();
-                CurrentPlayer.DisableLoadScreen();
+                EndPos = Instantiate(ExitPoint, FarOption, transform.rotation).transform.position + new Vector3(0, 1, 0);
             }
             else
             {
-                CurrentPlayer.gameObject.SetActive(false);
-                CurrentPlayer.transform.position = SpawnInstance.transform.position + new Vector3(0, 3, 0);
-                CurrentPlayer.gameObject.SetActive(true);
-                CurrentPlayer.DisableLoadScreen();
-                CurrentPlayer.ReloadItem();
-            }
-
-            // Store the spawn location for exit placement logic
-            selectedSpawnLocation = spawnLocation;
-            Options.Remove(spawnLocation);
-        }
-
-        // Store the selected spawn position globally
-        private Vector3 selectedSpawnLocation = Vector3.zero;
-
-
-        void PlaceExitPoint()
-        {
-            bool ExitFound = false;
-            int FailCounter = 0;
-
-            while(!ExitFound)
-            {
-                //bool FoundExitSpot = false;
-                Vector3 ExitSpot = Vector3.zero;
-                float LastDis = 0;
-
-                foreach (Vector3 Point in Options)
-                {
-                    float Dis = Vector3.Distance(Point, StartPos);
-                    if (Dis > LastDis)
-                    {
-                        ExitSpot = Point;
-                        LastDis = Dis;
-                    }
-                }
-
-                if (ExitSpot != Vector3.zero)
-                {
-                    path = new NavMeshPath();
-                    NavMesh.CalculatePath(StartPos, ExitSpot, NavMesh.AllAreas, path);
-
-                    Vector3 One = ExitSpot; One.y = 0;
-                    Vector3 Two = path.corners[path.corners.Length - 1]; Two.y = 0;
-
-                    if (One == Two)
-                    {
-                        Instantiate(ExitPoint, ExitSpot, transform.rotation, MapContainer);
-                        Options.Remove(ExitSpot);
-                        ExitFound = true;
-                    }
-                }
+                Options.Remove(FarOption);
+                print("DidStep");
 
                 FailCounter++;
-
-                if(FailCounter > 100)
-                {
-                    print("Not Good");
-                    RegenerateMap();
-                }
             }
         }
-
-        void EntitySpawning()
+        else
         {
-            foreach(Vector3 Point in Options)
+            Options.Clear();
+        }
+    }
+
+    void EntitySpawning()
+    {
+        int EnemyCount = 0;
+
+        foreach (Vector3 Point in Options)
+        {
+            if (Vector3.Distance(Point, StartPos) > SpawnSafeRadius)
             {
-                if(Vector3.Distance(Point, StartPos) > SpawnSafeRadius)
+                int R = Random.Range(0, 200);
+
+                if (R > 100 && R < EnemyLimit + 100 && EnemyCount < EnemyCap)
                 {
-                    int R = Random.Range(0, 200);
+                    Instantiate(MandM, Point + new Vector3(0, 1, 0), transform.rotation, MapContainer);
+                    EnemyCount++;
+                }
 
-                    if(R > 100 && R < EnemyLimit + 100)
-                    {
-                        Instantiate(MandM, Point + new Vector3(0, 1, 0), transform.rotation, MapContainer);
-                    }
-
-                    if(R < BoxLimit)
-                    {
-                        Instantiate(Box, Point + new Vector3(0, 1, 0), transform.rotation, MapContainer);
-                    }
+                if (R < BoxLimit)
+                {
+                    Instantiate(Box, Point + new Vector3(0, 1, 0), transform.rotation, MapContainer);
                 }
             }
         }
+    }
 
     #endregion
 
@@ -251,5 +270,22 @@ public class NoiseTexture : MonoBehaviour
     public void RegenerateMap()
     {
         SceneManager.LoadScene(0);
-    } 
+    }
+
+    Vector3 GetFarOption()
+    {
+        Vector3 ReturnValue = StartPos;
+        float LastDis = 0;
+        foreach (Vector3 Option in Options)
+        {
+            float Dis = Vector3.Distance(StartPos, Option);
+            if (Dis > LastDis)
+            {
+                ReturnValue = Option;
+                LastDis = Dis;
+            }
+        }
+
+        return ReturnValue;
+    }
 }

@@ -9,9 +9,12 @@ public class ItemPickUp : MonoBehaviour, IInteractable
 
     public void Interact()
     {
-        Debug.Log(itemData.itemName);
-        InventoryScript.Instance.inventoryItems.Add(itemData);
-        InventoryScript.Instance.AddItemIcon(itemData);
-        Destroy(transform.parent.gameObject);
+        if(InventoryScript.Instance.inventoryItems.Count < InventoryScript.Instance.InventorySlots)
+        {
+            Debug.Log(itemData.itemName);
+            InventoryScript.Instance.inventoryItems.Add(itemData);
+            InventoryScript.Instance.AddItemIcon(itemData);
+            Destroy(transform.parent.gameObject);
+        }
     }
 }
