@@ -5471,10 +5471,11 @@ MonoBehaviour:
   SpawnPoint: {fileID: 6674430682814872460}
   ExitPoint: {fileID: 1420918267}
   SpawnSafeRadius: 20
-  BoxLimit: 2
-  EnemyLimit: 1
+  BoxLimit: 3
+  EnemyLimit: 2
   OptionLimit: 0.4
   WallChance: 0.3
+  EnemyCap: 10
   Player: {fileID: 924137621946414982, guid: b6495dcc1e878a845ac7226db8f6f288, type: 3}
   CurrentPlayer: {fileID: 0}
   Box: {fileID: 5478176490765161500, guid: 6cd234abc13504a41b45fb4473ef4eb3, type: 3}
@@ -5652,8 +5653,8 @@ GameObject:
   - component: {fileID: 8146999963854095132}
   - component: {fileID: 6474164231792425558}
   - component: {fileID: 7565308708916682434}
-  - component: {fileID: 8146999963854095133}
   - component: {fileID: 8146999963854095134}
+  - component: {fileID: 8146999963854095135}
   m_Layer: 0
   m_Name: default
   m_TagString: Untagged
@@ -5963,8 +5964,24 @@ Transform:
   m_Children: []
   m_Father: {fileID: 8754928955463168580}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!64 &8146999963854095133
-MeshCollider:
+--- !u!208 &8146999963854095134
+NavMeshObstacle:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1133176694031175719}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Shape: 1
+  m_Extents: {x: 0.5, y: 5, z: 0.5}
+  m_MoveThreshold: 0.1
+  m_Carve: 1
+  m_CarveOnlyStationary: 0
+  m_Center: {x: 0, y: 5, z: 0}
+  m_TimeToStationary: 0.5
+--- !u!65 &8146999963854095135
+BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -5981,26 +5998,9 @@ MeshCollider:
   m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 5
-  m_Convex: 1
-  m_CookingOptions: 30
-  m_Mesh: {fileID: -2432090755550338912, guid: de5f7cb6de36d014faaf9b75f836caa1, type: 3}
---- !u!208 &8146999963854095134
-NavMeshObstacle:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1133176694031175719}
-  m_Enabled: 1
   serializedVersion: 3
-  m_Shape: 1
-  m_Extents: {x: 0.5, y: 5, z: 0.5}
-  m_MoveThreshold: 0.1
-  m_Carve: 1
-  m_CarveOnlyStationary: 1
+  m_Size: {x: 1, y: 10, z: 1}
   m_Center: {x: 0, y: 5, z: 0}
-  m_TimeToStationary: 0.5
 --- !u!1 &8229222018165876990
 GameObject:
   m_ObjectHideFlags: 0
