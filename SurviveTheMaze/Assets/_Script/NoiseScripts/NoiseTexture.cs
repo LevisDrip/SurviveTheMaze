@@ -139,6 +139,7 @@ public class NoiseTexture : MonoBehaviour
 
         if (Input.GetKey(KeyCode.R))
         {
+            CurrentPlayer.LoadingScreen.SetActive(true);
             RegenerateMap();
         }
 

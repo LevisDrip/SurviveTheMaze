@@ -5474,7 +5474,7 @@ MonoBehaviour:
   BoxLimit: 3
   EnemyLimit: 2
   OptionLimit: 0.4
-  WallChance: 0.3
+  WallChance: 0.4
   EnemyCap: 10
   Player: {fileID: 924137621946414982, guid: b6495dcc1e878a845ac7226db8f6f288, type: 3}
   CurrentPlayer: {fileID: 0}
