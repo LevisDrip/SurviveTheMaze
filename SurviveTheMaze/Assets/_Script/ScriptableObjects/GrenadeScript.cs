@@ -4,13 +4,13 @@ using UnityEngine;
 
 public class GrenadeScript : MonoBehaviour, IItemAble
 {
-    public GameObject OYBLYATGRENATA;
+    public GameObject GrenadePrefab;
 
     public void UseItem()
     {
         InventoryScript.Instance.inventoryItems.Remove(InventoryScript.Instance.PreviouslySelectedItem.StoredItem);
 
-        Instantiate(OYBLYATGRENATA,transform.position,transform.rotation);
+        Instantiate(GrenadePrefab,transform.position,transform.rotation);
 
         Destroy(InventoryScript.Instance.PreviouslySelectedItem.gameObject);
 

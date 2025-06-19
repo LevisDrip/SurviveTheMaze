@@ -5655,7 +5655,7 @@ GameObject:
   - component: {fileID: 7565308708916682434}
   - component: {fileID: 8146999963854095134}
   - component: {fileID: 8146999963854095135}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: default
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6010,7 +6010,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8754928955463168580}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Wall
   m_TagString: Wall
   m_Icon: {fileID: 0}

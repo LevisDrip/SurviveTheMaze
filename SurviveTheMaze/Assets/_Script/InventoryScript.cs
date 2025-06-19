@@ -77,7 +77,10 @@ public class InventoryScript : MonoBehaviour
         SelectedItemVisual.gameObject.SetActive(false);
     }
 
-
+    private void Update()
+    {
+        EnemyKillText.text = "Enemy Kills: " + EnemyKills;
+    }
 
     public void ToggleInventory()
     {
@@ -98,7 +101,7 @@ public class InventoryScript : MonoBehaviour
 
             IsOpen = true;
 
-            EnemyKillText.text = "Enemy Kills: " + EnemyKills;
+            
             CoinText.text = "Coins: " + Coins;
 
             Cursor.lockState = CursorLockMode.None;

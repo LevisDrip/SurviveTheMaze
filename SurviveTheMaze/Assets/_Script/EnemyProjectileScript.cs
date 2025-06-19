@@ -16,13 +16,16 @@ public class EnemyProjectileScript : MonoBehaviour
     void Update()
     {
         //collision
-        if (Physics.Linecast(transform.position, OldPos, out RaycastHit Hit, ~IgnoreLayer) && Hit.transform != origin)
+        if (Physics.Linecast(transform.position, OldPos, out RaycastHit Hit, IgnoreLayer) && Hit.transform != origin)
         {
             IDamageble Target = Hit.transform.GetComponent<IDamageble>();
             if (Target != null)
             {
                 Target.TakeDamage(Damage);
             }
+
+            //Destroy(gameObject);
+
         }
 
         OldPos = transform.position;
